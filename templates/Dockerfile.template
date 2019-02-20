@@ -1,0 +1,57 @@
+#################################################################
+# CloudOps IaC Local Development Environment
+#################################################################
+FROM ubuntu:16.04
+
+ARG terraformVersion
+ARG dockerAppUser
+
+# python
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip \
+                        python3-dev \
+                        vim \
+                        curl \
+                        gcc \
+                        libffi-dev \
+                        libssl-dev \
+                        unzip && \
+            apt-get clean && \
+            cd /usr/local/bin && \
+            ln -s /usr/bin/python3 python && \
+            pip3 install --upgrade pip
+
+#RUN curl -sL https://bootstrap.pypa.io/get-pip.py | python -
+
+# specific requirement to pin terraform version to 0.11.7 
+# uncomment below if terraform is required
+
+###INSTALL_TERRAFORM###RUN curl -sL -o /$HOME/.cache/terraform.zip "https://releases.hashicorp.com/terraform/${terraformVersion}/terraform_${terraformVersion}_linux_amd64.zip" && unzip /$HOME/.cache/terraform.zip -d /usr/local/bin 
+
+RUN curl -sL -o /usr/local/bin/aws-vault https://github.com/99designs/aws-vault/releases/download/v4.5.1/aws-vault-linux-amd64
+RUN chmod +x /usr/local/bin/aws-vault
+#RUN rm -rf $HOME/.cache
+
+
+RUN echo "root:${dockerAppUser}" |chpasswd
+RUN useradd -ms /bin/bash ${dockerAppUser}
+RUN echo "${dockerAppUser}:${dockerAppUser}" |chpasswd
+
+VOLUME ["/repos"]
+
+RUN mkdir -p /scripts
+#ADD api-server.py /scripts
+ADD pip_packages /scripts
+WORKDIR /scripts
+RUN pip install -r pip_packages
+RUN chown -R "${dockerAppUser}:${dockerAppUser}" /scripts
+RUN rm -rf $HOME/.cache
+
+USER ${dockerAppuser}
+#EXPOSE 5000
+WORKDIR /repos
+#CMD  python /scripts/api-server.py /repos
+
+###INSTALL_AWS_VAULT###ADD entry.sh /scripts/
+###INSTALL_AWS_VAULT###ENTRYPOINT ["/scripts/entry.sh"]
+
