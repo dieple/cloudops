@@ -6,6 +6,13 @@ FROM ubuntu:16.04
 ARG terraformVersion
 ARG dockerAppUser
 
+# Warning: It is not recommended to use build-time variables for passing secrets like github
+# keys, user credentials etc. 
+# Build-time variable values are visible to any user of the image with the docker 
+# history command. 
+# Since I'm using this for my personal local development env so should be OK.
+ARG sshKey
+
 # python
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip \
@@ -47,6 +54,11 @@ WORKDIR /scripts
 RUN pip install -r pip_packages
 RUN chown -R "${dockerAppUser}:${dockerAppUser}" /scripts
 RUN rm -rf $HOME/.cache
+RUN mkdir -p "/home/${dockerAppUser}/.ssh"
+RUN chmod 0700 "/home/${dockerAppUser}/.ssh"
+RUN echo "$sshKey" > "/home/${dockerAppUser}/.ssh/id_rsa"
+RUN chmod 0600 "/home/${dockerAppUser}/.ssh/id_rsa"
+RUN chown -R "${dockerAppUser}:${dockerAppUser}" "/home/${dockerAppUser}/.ssh"
 ADD templates/vimrc "/home/${dockerAppUser}/.vimrc"
 
 USER ${dockerAppuser}

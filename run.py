@@ -120,7 +120,7 @@ def create_dockerfile_from_template(args, dockerfile_template, output_dockerfile
 
 def build_docker_image(args, dockerfile):
     #you need to use os.system module to execute shell command
-    build_command = "docker build --build-arg profile={0} --build-arg terraformVersion={1} --build-arg dockerAppUser={2} --rm -f {3} -t {4}:latest .".format(args.profile, args.terraformVersion, args.dockerAppUser, dockerfile, args.imageName)
+    build_command = 'docker build --build-arg profile={0} --build-arg terraformVersion={1} --build-arg dockerAppUser={2} --build-arg sshKey="$(cat ~/.ssh/id_rsa)"  --rm -f {3} -t {4}:latest .'.format(args.profile, args.terraformVersion, args.dockerAppUser, dockerfile, args.imageName)
 
     logger.info("build_command: {0}".format(build_command))
     os.system(build_command)
