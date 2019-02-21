@@ -11,6 +11,7 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip \
                         python3-dev \
                         vim \
+                        git \
                         curl \
                         gcc \
                         libffi-dev \
@@ -46,6 +47,7 @@ WORKDIR /scripts
 RUN pip install -r pip_packages
 RUN chown -R "${dockerAppUser}:${dockerAppUser}" /scripts
 RUN rm -rf $HOME/.cache
+ADD templates/vimrc "/home/${dockerAppUser}/.vimrc"
 
 USER ${dockerAppuser}
 #EXPOSE 5000
