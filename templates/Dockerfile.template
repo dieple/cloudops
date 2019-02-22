@@ -1,5 +1,9 @@
 #################################################################
 # CloudOps IaC Local Development Environment
+#
+# Please do not modify the Dockerfile manually as it generate
+# by run.py. All modifications should be done in 
+# templates/Dockerfile.template
 #################################################################
 FROM ubuntu:16.04
 
@@ -38,6 +42,9 @@ RUN apt-get update && \
 
 RUN curl -sL -o /usr/local/bin/aws-vault https://github.com/99designs/aws-vault/releases/download/v4.5.1/aws-vault-linux-amd64
 RUN chmod +x /usr/local/bin/aws-vault
+
+RUN curl -SsL https://github.com/kvz/json2hcl/releases/download/v0.0.6/json2hcl_v0.0.6_linux_amd64 | tee /usr/local/bin/json2hcl > /dev/null && chmod 755 /usr/local/bin/json2hcl
+
 #RUN rm -rf $HOME/.cache
 
 

@@ -1,3 +1,7 @@
+#
+# Warning - auto generate by run.py
+# Make modifications in templates/pip_packages.template
+#
 aniso8601==2.0.0
 click==6.7
 Flask==0.12.2
@@ -13,3 +17,4 @@ wheel==0.24.0
 python-terraform==0.9.1
 terrascript==0.6.0
 awscli
+pyhcl
